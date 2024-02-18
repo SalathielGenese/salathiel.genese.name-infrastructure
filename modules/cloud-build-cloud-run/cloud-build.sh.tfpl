@@ -1,0 +1,30 @@
+#
+# Install `gcloud` CLI into Ubuntu-based Google Cloud Build docker builder
+#
+apt-get update
+apt-get install apt-transport-https ca-certificates gnupg curl sudo -y
+curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+apt-get update
+apt-get install google-cloud-cli -y
+#
+# Build docker images, push to Artifact Registry, tag as latest and update the registry to reflect
+#
+tag="$( date +"%Y%m%dT%H%M%SZ" )-$COMMIT_SHA"
+image="$LOCATION-docker.pkg.dev/${PROJECT}/${PROJECT}-web/${PROJECT}-web-${MODULE}"
+
+docker build --tag "$image:$tag" .
+docker push "$image:$tag"
+
+docker tag "$image:$tag" "$image:latest"
+docker push "$image:latest"
+#
+# Deploy latest image to Google Cloud Run
+#
+gcloud run deploy "${PROJECT}-web-${MODULE}" \
+    --set-secrets "/opt/secrets/gcp-credentials=${GCP_CREDENTIALS_SECRET_ID}:latest" \
+    --set-env-vars "GOOGLE_CLOUD_CREDENTIALS=/opt/secrets/gcp-credentials" \
+    --set-env-vars "GCP_CREDENTIALS=/opt/secrets/gcp-credentials" \
+    --set-env-vars "GCP_DATASTORE_DATABASE=${PROJECT}-web" \
+    --image "$image:$tag" \
+    --region "$LOCATION"
