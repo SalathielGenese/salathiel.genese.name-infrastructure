@@ -26,5 +26,6 @@ gcloud run deploy "${PROJECT}-web-${MODULE}" \
     --set-env-vars "GOOGLE_CLOUD_CREDENTIALS=/opt/secrets/gcp-credentials" \
     --set-env-vars "GCP_CREDENTIALS=/opt/secrets/gcp-credentials" \
     --set-env-vars "GCP_DATASTORE_DATABASE=${PROJECT}-web" \
+    --set-env-vars "GCP_PROJECT_ID=${PROJECT}" \
     --image "$image:$tag" \
     --region "$LOCATION"

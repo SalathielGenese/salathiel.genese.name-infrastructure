@@ -24,6 +24,10 @@ resource "google_cloud_run_v2_service" "web" {
         mount_path = "/opt/secrets"
       }
       env {
+        value = var.project-id
+        name  = "GCP_PROJECT_ID"
+      }
+      env {
         value = "${var.project-id}-web"
         name  = "GCP_DATASTORE_DATABASE"
       }
