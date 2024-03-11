@@ -78,12 +78,6 @@ resource "google_secret_manager_secret_iam_member" "gcp-credentials--iam--comput
   secret_id = google_secret_manager_secret.gcp-credentials.id
   role      = "roles/secretmanager.secretAccessor"
 }
-#resource "google_secret_manager_secret_iam_member" "cloudbuild-iam-secretmanager" {
-#  # TODO: Remove this unnecessary resource. Only Cloud Run will need access to this, through compute
-#  member    = "serviceAccount:${data.google_project.web.number}@cloudbuild.gserviceaccount.com"
-#  secret_id = google_secret_manager_secret.gcp-credentials.id
-#  role      = "roles/secretmanager.secretAccessor"
-#}
 #
 # GCP Databases
 #
@@ -96,18 +90,6 @@ resource "google_firestore_database" "web" {
   app_engine_integration_mode = "DISABLED"
   deletion_policy             = "DELETE"
 }
-#module "staging" {
-#  hdc-gcp-credentials-secret-id = google_secret_manager_secret.hdc-gcp-credentials.secret_id
-#  repository-id                 = google_cloudbuildv2_repository.web.id
-#  source                        = "./modules/cloud-build-cloud-run"
-#  project-number                = data.google_project.this.number
-#  domain                        = "staging.hopedaycameroon.com"
-#  project-id                    = local.project
-#  region                        = local.region
-#  branch                        = "^staging$"
-#  module-name                   = "staging"
-#  domain-www-subdomain          = false
-#}
 
 module "staging" {
   gcp-credentials-secret-id = google_secret_manager_secret.gcp-credentials.secret_id
