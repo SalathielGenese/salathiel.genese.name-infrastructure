@@ -47,7 +47,7 @@ resource "google_cloud_run_v2_service_iam_member" "web--iam--run" {
 }
 resource "google_cloud_run_domain_mapping" "web" {
   location = var.region
-  for_each = toset([".", "www."])
+  for_each = toset(var.www ? [".", "www."] : ["."])
   name     = "." == each.value ? var.domain : "${each.value}${var.domain}"
 
   metadata {

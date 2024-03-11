@@ -12,3 +12,7 @@ variable "project-id" { type = string }
 variable "region" { type = string }
 variable "domain" { type = string }
 variable "branch" { type = string }
+variable "www" {
+  default = false
+  type    = bool
+}

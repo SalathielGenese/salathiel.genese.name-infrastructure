@@ -113,4 +113,5 @@ module "prod" {
   branch                    = "^main$"
   module-name               = "prod"
   launch-stage              = "GA"
+  www                       = true
 }
